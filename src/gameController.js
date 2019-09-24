@@ -7,15 +7,18 @@ export const actions = {
 export function gameReducer(state, { type, payload }) {
   switch (type) {
     case actions.END_OF_TURN: {
-      const { x, y } = payload;
-      const newField = state.field.map((row, index) => {
-        if (index === x) {
-          return row.map((col, colIndex) =>
-            colIndex === y ? state.player : col
-          );
+      const { col } = payload;
+      const newField = JSON.parse(JSON.stringify(state.field))
+
+      // case with column overflow is unhandled here but handled on view side
+      let rowIndex = newField.length - 1
+      while (rowIndex >= 0) {
+        if (!newField[rowIndex][col]) {
+          newField[rowIndex][col] = state.player
+          break
         }
-        return row;
-      });
+        rowIndex--
+      }
 
       let winner = findWinner(newField, ...state.players);
 
