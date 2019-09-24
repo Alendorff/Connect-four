@@ -12,13 +12,14 @@ describe("game logic", () => {
   it("END_OF_TURN action works correctly", () => {
     const state = {
       field: [
-        [0, 0, 0, 0, 0, 0, 0, 0], // bottom line
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, p2, p2, p2, 0, 0, 0, 0],
+        [0, p1, p1, p1, 0, 0, 0, 0]
       ],
+      players: [p1, p2],
       player: p1,
       winner: null
     };
@@ -26,50 +27,18 @@ describe("game logic", () => {
     expect(
       gameReducer(state, {
         type: actions.END_OF_TURN,
-        payload: { x: 0, y: 3 }
+        payload: { x: 5, y: 0 }
       })
     ).toEqual({
       field: [
-        [0, 0, 0, p1, 0, 0, 0, 0], // bottom line
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
-      ],
-      player: p2,
-      winner: null
-    });
-  });
-
-  it("END_OF_TURN action updates winner", () => {
-    const state = {
-      field: [
-        [0, p1, p1, p1, 0, 0, 0, 0], // bottom line
         [0, p2, p2, p2, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [p1, p1, p1, p1, 0, 0, 0, 0] // bottom line
       ],
-      player: p1,
-      winner: null
-    };
-
-    expect(
-      gameReducer(state, {
-        type: actions.END_OF_TURN,
-        payload: { x: 0, y: 0 }
-      })
-    ).toEqual({
-      field: [
-        [p1, p1, p1, p1, 0, 0, 0, 0], // bottom line
-        [0, p2, p2, p2, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
-      ],
+      players: [p1, p2],
       player: p2,
       winner: p1
     });
@@ -105,48 +74,48 @@ describe("game logic", () => {
 
     it("x axis win", () => {
       const field = [
-        [0, p1, p2, p2, p1, 0, 0, 0], // bottom line
-        [0, 0, p1, p1, p2, p1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, p1, p1, p1, p1, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, p1, p1, p2, p1, 0, 0],
+        [0, p1, p2, p2, p1, 0, 0, 0]
       ];
       expect(findWinner(field, p1, p2)).toBe(p1);
     });
 
     it("y axis win", () => {
       const field = [
-        [0, p1, p2, p2, p1, 0, 0, 0], // bottom line
-        [0, 0, p1, p2, p2, p1, 0, 0],
-        [0, 0, p1, p2, p1, p1, 0, 0],
-        [0, 0, 0, p2, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, p2, 0, 0, 0, 0],
+        [0, 0, p1, p2, p1, p1, 0, 0],
+        [0, 0, p1, p2, p2, p1, 0, 0],
+        [0, p1, p2, p2, p1, 0, 0, 0]
       ];
       expect(findWinner(field, p1, p2)).toBe(p2);
     });
 
-    it("diagonal-1 axis win", () => {
+    it("slash axis win", () => {
       const field = [
-        [0, p1, p2, p2, p1, 0, 0, 0], // bottom line
-        [0, p2, p1, p1, p2, 0, 0, 0],
-        [0, p2, p2, p1, p2, 0, 0, 0],
-        [0, 0, 0, 0, p1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, p1, 0, 0, 0],
+        [0, p2, p2, p1, p2, 0, 0, 0],
+        [0, p2, p1, p1, p2, 0, 0, 0],
+        [0, p1, p2, p2, p1, 0, 0, 0]
       ];
       expect(findWinner(field, p1, p2)).toBe(p1);
     });
 
-    it("diagonal-2 axis win", () => {
+    it("backslash axis win", () => {
       const field = [
-        [0, p1, p2, p2, p1, 0, 0, 0], // bottom line
-        [0, p2, p2, p1, 0, 0, 0, 0],
-        [0, p2, p1, p2, 0, 0, 0, 0],
-        [0, p1, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, p1, 0, 0, 0, 0, 0, 0],
+        [0, p2, p1, p2, 0, 0, 0, 0],
+        [0, p2, p2, p1, 0, 0, 0, 0],
+        [0, p1, p2, p2, p1, 0, 0, 0]
       ];
       expect(findWinner(field, p1, p2)).toBe(p1);
     });

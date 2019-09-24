@@ -1,21 +1,5 @@
 const WIN_COUNT = 4;
 
-const player1 = "red";
-const player2 = "yellow";
-
-const defaultState = {
-  field: [
-    [0, 1, 2, 3, 4, 5, 6, 7], // bottom line
-    [0, 1, 2, 3, 4, 5, 6, 7],
-    [0, 1, 2, 3, 4, 5, 6, 7],
-    [0, 1, 2, 3, 4, 5, 6, 7],
-    [0, 1, 2, 3, 4, 5, 6, 7],
-    [0, 1, 2, 3, 4, 5, 6, 7]
-  ],
-  player: player1,
-  winner: null
-};
-
 export const actions = {
   END_OF_TURN: "END_OF_TURN"
 };
@@ -33,17 +17,21 @@ export function gameReducer(state, { type, payload }) {
         return row;
       });
 
-      let winner = findWinner(newField, player1, player2);
+      let winner = findWinner(newField, ...state.players);
 
       return {
         field: newField,
-        player: state.player === player1 ? player2 : player1,
+        players: state.players,
+        player:
+          state.player === state.players[0]
+            ? state.players[1]
+            : state.players[0],
         winner
       };
     }
 
     default: {
-      return state
+      return state;
     }
   }
 }
@@ -74,28 +62,12 @@ export function findWinner(newField, player1, player2) {
     rowIndex++;
   }
 
-  // diagonal 1
   const bottomToTop = true;
   const diagonalsFromBottom = getAllDiagonals(newField, bottomToTop);
   rowIndex = 0;
   while (rowIndex < diagonalsFromBottom.length) {
     let winner = getWinnerFromSequence(
       diagonalsFromBottom[rowIndex],
-      player1,
-      player2
-    );
-    if (winner) {
-      return winner;
-    }
-    rowIndex++;
-  }
-
-  // diagonal 2
-  const diagonalsFromTop = getAllDiagonals(newField);
-  rowIndex = 0;
-  while (rowIndex < diagonalsFromTop.length) {
-    let winner = getWinnerFromSequence(
-      diagonalsFromTop[rowIndex],
       player1,
       player2
     );
