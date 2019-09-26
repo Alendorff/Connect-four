@@ -5,8 +5,17 @@ import {
   getWinnerFromSequence
 } from "./gameController";
 
-const p1 = "red";
-const p2 = "yellow";
+
+const player1 = {
+  name: "player1",
+  color: "#ffc933"
+};
+const player2 = {
+  name: "player2",
+  color: "red"
+};
+const p1 = player1.color
+const p2 = player2.color
 
 describe("game logic", () => {
   it("END_OF_TURN action works correctly", () => {
@@ -19,8 +28,11 @@ describe("game logic", () => {
         [0, 0, p2, p1, 0, 0, 0, 0],
         [0, 0, p1, p1, 0, 0, 0, 0]
       ],
-      players: [p1, p2],
-      player: p1,
+      players: {
+        [player1.color]: player1,
+        [player2.color]: player2
+      },
+      color: p1,
       winner: null
     };
 
@@ -38,9 +50,12 @@ describe("game logic", () => {
         [0, 0, p2, p1, 0, 0, 0, 0],
         [0, 0, p1, p1, 0, 0, 0, 0]
       ],
-      players: [p1, p2],
-      player: p2,
-      winner: p1
+      players: {
+        [player1.color]: player1,
+        [player2.color]: player2
+      },
+      color: p2,
+      winner: player1
     });
   });
 

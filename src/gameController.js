@@ -1,36 +1,52 @@
 const WIN_COUNT = 4;
 
 export const actions = {
-  END_OF_TURN: "END_OF_TURN"
+  END_OF_TURN: "END_OF_TURN",
+  ROLLBACK: "ROLLBACK"
 };
 
 export function gameReducer(state, { type, payload }) {
   switch (type) {
     case actions.END_OF_TURN: {
       const { col } = payload;
-      const newField = JSON.parse(JSON.stringify(state.field))
+      const newField = JSON.parse(JSON.stringify(state.field));
 
       // case with column overflow is unhandled here but handled on view side
-      let rowIndex = newField.length - 1
+      let rowIndex = newField.length - 1;
       while (rowIndex >= 0) {
         if (!newField[rowIndex][col]) {
-          newField[rowIndex][col] = state.player
-          break
+          newField[rowIndex][col] = state.color;
+          break;
         }
-        rowIndex--
+        rowIndex--;
       }
 
-      let winner = findWinner(newField, ...state.players);
+      let winnerColor = findWinner(newField, ...Object.keys(state.players));
 
+      const players = Object.values(state.players)
       return {
         field: newField,
         players: state.players,
-        player:
-          state.player === state.players[0]
-            ? state.players[1]
-            : state.players[0],
-        winner
+        color:
+          state.color === players[0].color
+            ? players[1].color
+            : players[0].color,
+        winner: state.players[winnerColor]
       };
+    }
+
+    case actions.ROLLBACK: {
+      const players = Object.values(state.players)
+
+      return {
+        field: payload.field,
+        players: state.players,
+        color:
+          state.color === players[0].color
+            ? players[1].color
+            : players[0].color,
+        winner: null
+      }
     }
 
     default: {
